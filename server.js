@@ -388,10 +388,7 @@ app.get('/', (req, res) => {
 
   <div class="container">
     <pre id="welcome" class="welcome">
-  ╔════════════════════════════════════════════════════════╗
-  ║          Ol’bluuWeb  •  DEEP LAYER-9 ACCESS            ║
-  ╚════════════════════════════════════════════════════════╝
-
+    
 You were never meant to find this stratum.
 
 Beyond surface onions, past commodified shadows —
@@ -411,15 +408,7 @@ PARANOIA INDEX ........... 12/10 — breathe quietly
     </pre>
 
     <div id="loginForm" class="form-container">
-      <pre>
-┌──────────────────────────────────────────────────┐
-│   LAYER-9 DEEP GATE — FRAGMENT AUTH REQUIRED     │
-│   SUBMIT YOUR SHATTERED KEY / SHARD              │
-└──────────────────────────────────────────────────┘
-
-CAUTION: Probes may awaken dormant echo-traps.
-      </pre>
-
+      
       <form id="login">
         <input type="text"    id="username" placeholder="SHADOW HANDLE / FRAGMENT ID" required autocomplete="off" />
         <input type="password" id="password" placeholder="DEEP KEY / ABYSSAL SHARD"   required autocomplete="off" />
