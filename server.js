@@ -69,10 +69,10 @@ function printStartupBanner() {
   console.log(`${brightGreen}║   TRACE LEVEL: ULTRA-PARANOID             ${brightGreen}║${reset}`);
   console.log(`${brightGreen}╚════════════════════════════════════════════╝${reset}`);
   console.log('');
-  console.log(`${dimGreen}External node${reset}: ${brightGreen}hackerthheme.onrender.com${reset}`);
+  console.log(`${dimGreen}External node${reset}: ${brightGreen}prohacker.com${reset}`);
   console.log(`${dimGreen}Uptime${reset}        : ${brightGreen}${uptime}s${reset}`);
   console.log(`${dimGreen}Circuits / Tunnels${reset}: ~${brightGreen}${circuits}${reset}`);
-  console.log(`${dimGreen}Endpoints${reset}      : simulated (Tor / I2P / Onion)${reset}`);
+  console.log(`${dimGreen}Endpoints${reset}      : *** (Tor / I2P / Onion)${reset}`);
   console.log('');
   console.log(`${brightGreen}┌────────────────────────────────────────────┐${reset}`);
   console.log(`${brightGreen}│ BOOT SEQUENCE COMPLETE ─ GRID LINKED       │${reset}`);
