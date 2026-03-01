@@ -405,8 +405,8 @@ PARANOIA INDEX ........... 12/10 — breathe quietly
     <div id="loginForm" class="form-container">
       
       <form id="login">
-        <input type="text"    id="username" placeholder="SHADOW HANDLE / FRAGMENT ID" required autocomplete="off" />
-        <input type="password" id="password" placeholder="DEEP KEY / ABYSSAL SHARD"   required autocomplete="off" />
+        <input type="text"    id="username" placeholder="SHADOW HANDLE" required autocomplete="off" />
+        <input type="password" id="password" placeholder="Bluu DEEP KEY"   required autocomplete="off" />
         <button type="submit">BREACH LAYER</button>
       </form>
 
