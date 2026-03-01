@@ -3,160 +3,126 @@ const express = require('express');
 const app = express();
 
 // ────────────────────────────────────────────────
-//     CHAOTIC HACKER-MODE CONSOLE LOGGER (Matrix vibe)
+//   MOBILE-FRIENDLY HACKER CONSOLE LOGGER
 // ────────────────────────────────────────────────
 const reset         = '\x1b[0m';
-const brightGreen   = '\x1b[92m';     // bright lime – best visibility in logs
-const green         = '\x1b[32m';
+const brightGreen   = '\x1b[92m';
 const dimGreen      = '\x1b[2m\x1b[32m';
 const brightRed     = '\x1b[91m';
 const yellow        = '\x1b[93m';
 const brightMagenta = '\x1b[95m';
 const brightCyan    = '\x1b[96m';
-const bgBlack       = '\x1b[40m';     // may or may not render on Render
 
-// Glitchy timestamp (occasional corruption for flavor)
-const getGlitchTs = () => {
-  const now = new Date();
-  if (Math.random() < 0.14) {
-    const corrupted = now.toISOString().slice(0, 19).split('').sort(() => Math.random() - 0.5).join('');
-    return `${dimGreen}[GL1TCH:${corrupted}]${reset}`;
+// Short timestamp: HH:MM:SS + rare glitch
+const getShortTs = () => {
+  const d = new Date();
+  const h = d.getHours().toString().padStart(2,'0');
+  const m = d.getMinutes().toString().padStart(2,'0');
+  const s = d.getSeconds().toString().padStart(2,'0');
+
+  if (Math.random() < 0.09) {
+    return `${dimGreen}[GL:${h}:${m}:${s}]${reset}`;
   }
-  return `${dimGreen}[${now.toISOString().replace('T', ' ').slice(0, 19)}]${reset}`;
+  return `${dimGreen}[${h}:${m}:${s}]${reset}`;
 };
 
 function chaosLog(level = 'INFO', ...msgParts) {
-  const ts = getGlitchTs();
+  const ts = getShortTs();
+
+  // Single char prefixes – very compact
   const prefixes = {
-    INFO:   `${brightGreen}█ INFO ${reset}`,
-    ACCESS: `${brightCyan}█ ACCESS${reset}`,
-    DB:     `${brightMagenta}█ DB    ${reset}`,
-    INTR:   `${brightRed}█ INTR  ${reset}`,
-    CRYPTO: `${yellow}█ CRYPTO${reset}`,
-    SYS:    `${green}█ SYS   ${reset}`,
-    ERROR:  `${brightRed}█ ERR   ${reset}`,
-    GLITCH: `${brightMagenta}█ GL1TCH${reset}`,
-    TOR:    `${brightMagenta}█ TOR   ${reset}`,
-    ONION:  `${yellow}█ ONION ${reset}`,
-    I2P:    `${brightCyan}█ I2P   ${reset}`
+    INFO:   `${brightGreen}I${reset}`,
+    ACCESS: `${brightCyan}A${reset}`,
+    DB:     `${brightMagenta}D${reset}`,
+    INTR:   `${brightRed}!${reset}`,
+    CRYPTO: `${yellow}C${reset}`,
+    SYS:    `${brightGreen}S${reset}`,
+    ERROR:  `${brightRed}E${reset}`,
+    GLITCH: `${brightMagenta}G${reset}`,
+    TOR:    `${brightMagenta}T${reset}`,
+    ONION:  `${yellow}O${reset}`,
+    I2P:    `${brightCyan}2${reset}`
   };
 
-  const prefix = prefixes[level] || `${brightGreen}█ ${level.padEnd(6)}${reset}`;
-  const line = `${dimGreen}┃${reset} ${ts} ${prefix}${reset}`;
+  const prefix = prefixes[level] || `${brightGreen}?${reset}`;
+  const line = `${ts} ${prefix} `;
 
-  // Occasional subtle scanline / noise effect
-  const noise = Math.random() < 0.09 ? `${dimGreen}───[NOISE]─── ${reset}` : '';
+  let msg = msgParts.join(' ').trim();
+  // Truncate long messages for mobile
+  if (msg.length > 62) msg = msg.slice(0, 59) + '...';
 
-  const parts = msgParts.map(p =>
-    typeof p !== 'string' ? p :
-    Math.random() < 0.10 ? p + ` 0x${Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6,'0')}` :
-    p
-  );
+  // Very rare subtle noise marker
+  const noise = Math.random() < 0.05 ? `${dimGreen}~${reset}` : '';
 
-  console.log(`${line} ${noise}${parts.join(' ')}`);
+  console.log(`${line}${noise}${msg}`);
 }
 
-// ────────────────────────────────────────────────
-//     STARTUP BANNER (mimics browser look in logs)
-// ────────────────────────────────────────────────
+// Tiny startup banner – fits small screens
 function printStartupBanner() {
-  const uptime = process.uptime() | 0;
-  const circuits = Math.floor(Math.random() * 8) + 5;
-
-  console.log(`${brightGreen}╔════════════════════════════════════════════╗${reset}`);
-  console.log(`${brightGreen}║          ${brightGreen}STEADYBOMBER${reset}                   ${brightGreen}║${reset}`);
-  console.log(`${brightGreen}║      SHADOW NODE v13.37 ACTIVE            ${brightGreen}║${reset}`);
-  console.log(`${brightGreen}║   TOR + I2P LAYERS ENGAGED                ${brightGreen}║${reset}`);
-  console.log(`${brightGreen}║   TRACE LEVEL: ULTRA-PARANOID             ${brightGreen}║${reset}`);
-  console.log(`${brightGreen}╚════════════════════════════════════════════╝${reset}`);
-  console.log('');
-  console.log(`${dimGreen}External node${reset}: ${brightGreen}biggerboymoves.onrender.com${reset}`);
-  console.log(`${dimGreen}Uptime${reset}        : ${brightGreen}${uptime}s${reset}`);
-  console.log(`${dimGreen}Circuits / Tunnels${reset}: ~${brightGreen}${circuits}${reset}`);
-  console.log(`${dimGreen}Endpoints${reset}      : ${dimGreen}simulated (Tor / I2P / Onion)${reset}`);
-  console.log('');
-  console.log(`${brightGreen}┌────────────────────────────────────────────┐${reset}`);
-  console.log(`${brightGreen}│ BOOT SEQUENCE COMPLETE ─ GRID LINKED       │${reset}`);
-  console.log(`${brightGreen}└────────────────────────────────────────────┘${reset}`);
-  console.log('');
+  const uptime = Math.floor(process.uptime());
+  console.log(`${brightGreen}>> STEADYBOMBER NODE 13.37${reset}`);
+  console.log(`${dimGreen} TOR+I2P | PARANOID MODE${reset}`);
+  console.log(`${dimGreen} Up: ${uptime}s | sim${reset}`);
+  console.log(`${brightGreen}── boot ok ──${reset}`);
 }
 
-// Fake Tor / Onion / I2P helpers (unchanged from your last version)
+// ────────────────────────────────────────────────
+//   Fake helpers (shortened output where possible)
+// ────────────────────────────────────────────────
 const fakeNodes = [
-  'A1B2C3D4E5F67890123456789ABCDEF123456789',
-  'FEDCBA9876543210FEDCBA9876543210FEDCBA98',
-  '1337DEAD1337BEEF1337DEAD1337BEEF1337DEAD',
-  'E5F67890ABCDEF123456789A1B2C3D4E5F678901',
-  'C0FFEEFACEC0FFEEFACEC0FFEEFACEC0FFEEFACE'
+  'A1B2C3D4..', 'FEDCBA98..', '1337BEEF..',
+  'E5F67890..', 'C0FFEEFA..'
 ];
 
-const randomNode = () => fakeNodes[Math.floor(Math.random() * fakeNodes.length)].slice(0, 8) + '..';
+const randomNode = () => fakeNodes[Math.floor(Math.random() * fakeNodes.length)];
 
 const randomPath = () => {
   const hops = Math.floor(Math.random() * 3) + 3;
-  return Array(hops).fill(0).map(randomNode).join(' → ');
+  return Array(hops).fill(0).map(randomNode).join('>');
 };
 
-const fakeBlindedKey = () => 'blinded-' + Math.random().toString(36).slice(2, 14);
+const fakeBlindedKey = () => 'blnd-' + Math.random().toString(36).slice(2,9);
 
-const fakeTunnelId = () => `tunnel-${Math.floor(Math.random() * 99999999)}`;
-const fakeParticipant = () => `peer-${Math.random().toString(36).slice(2, 10)}..`;
+const fakeTunnelId = () => `t-${Math.floor(Math.random() * 99999)}`;
 
 // ────────────────────────────────────────────────
 //         MOCK CHAOTIC BACKGROUND NOISE
 // ────────────────────────────────────────────────
 const fakeActivity = () => {
-  const rand = Math.random();
+  const r = Math.random();
 
-  if (rand < 0.28) {
-    const circuitId = Math.floor(Math.random() * 999999);
+  if (r < 0.24) {
+    const cid = Math.floor(Math.random() * 99999);
     const roll = Math.random();
-    if (roll < 0.15) chaosLog('TOR', `Bootstrapped 60% (conn_done): Connected to a relay`);
-    else if (roll < 0.30) chaosLog('TOR', `Bootstrapped 80% (conn_or): Handshake finished with first hop`);
-    else if (roll < 0.50) chaosLog('TOR', `CIRCUIT ${circuitId} EXTENDED hop=${randomNode()}`);
-    else if (roll < 0.70) chaosLog('TOR', `CIRCUIT ${circuitId} BUILT path=${randomPath()}`);
-    else if (roll < 0.85) chaosLog('TOR', `CIRCUIT ${circuitId} FAILED reason=${['TIMEOUT','DESTROYED','INTERNAL','OR_CONN_CLOSED'][Math.floor(Math.random()*4)]}`);
-    else chaosLog('TOR', `CIRCUIT ${circuitId} CLOSED`);
+         if (roll < 0.25) chaosLog('TOR', `Bootstrap 60-80%`);
+    else if (roll < 0.55) chaosLog('TOR', `CIRC ${cid} EXT ${randomNode()}`);
+    else if (roll < 0.8)  chaosLog('TOR', `CIRC ${cid} BUILT ${randomPath()}`);
+    else                  chaosLog('TOR', `CIRC ${cid} fail/close`);
   }
-  else if (rand < 0.38) {
-    chaosLog('TOR', `Guard node changed → new guard ${randomNode()}`);
+  else if (r < 0.34) {
+    chaosLog('TOR', `Guard ${randomNode()}`);
   }
-  else if (rand < 0.45) {
-    chaosLog('TOR', `STREAM ATTACHED circuit=${Math.floor(Math.random()*999999)} port=local:${Math.floor(Math.random()*50000)+10000}`);
+  else if (r < 0.45) {
+    chaosLog('ONION', `HSv3 desc ${fakeBlindedKey()}`);
   }
-  else if (rand < 0.60) {
-    const blinded = fakeBlindedKey();
-    const roll = Math.random();
-    if (roll < 0.25) chaosLog('ONION', `Generating new HSv3 descriptor → blinded pubkey ${blinded}`);
-    else if (roll < 0.50) chaosLog('ONION', `Uploading HS descriptor to HSDir replica 1/2 → ${blinded} success`);
-    else if (roll < 0.70) chaosLog('ONION', `Descriptor upload failed → HSDir unreachable blinded=${blinded.slice(0,12)}.. reason=timeout`);
-    else if (roll < 0.85) chaosLog('ONION', `Publishing intro points → ${Math.floor(Math.random()*3)+2} points announced`);
-    else chaosLog('ONION', `Rendezvous attempt → circuit established for client request`);
+  else if (r < 0.58) {
+    chaosLog('I2P', `Tunnel ${fakeTunnelId()} active`);
   }
-  else if (rand < 0.80) {
-    const tunnel = fakeTunnelId();
-    const roll = Math.random();
-    if (roll < 0.30) chaosLog('I2P', `Building new outbound tunnel ${tunnel} → garlic routing active`);
-    else if (roll < 0.55) chaosLog('I2P', `Inbound tunnel ${tunnel} established → ${Math.floor(Math.random()*4)+2} participants [${fakeParticipant()}, ...]`);
-    else if (roll < 0.70) chaosLog('I2P', `Garlic message bundled → 3 cloves (leaseSet + delivery status + data)`);
-    else if (roll < 0.85) chaosLog('I2P', `Tunnel ${tunnel} rotated → new exploratory tunnel created`);
-    else chaosLog('I2P', `LeaseSet published → destination reachable via garlic encryption`);
+  else if (r < 0.72) {
+    chaosLog('INTR', `Probe 185.220.*.* blocked`);
   }
-  else if (rand < 0.88) {
-    chaosLog('INTR', `Blocked probe from 185.220.101.${Math.floor(Math.random()*255)} (possible Tor exit)`);
-  }
-  else if (rand < 0.94) {
-    chaosLog('DB', `Replica sync → latency ${Math.floor(Math.random()*20)+3}ms`);
+  else if (r < 0.84) {
+    chaosLog('SYS', `Check ${Math.random() > 0.88 ? 'TAMPER' : 'ok'}`);
   }
   else {
-    chaosLog('GLITCH', `Fragment corruption seq=${Math.floor(Math.random()*999999)}`);
+    chaosLog('GLITCH', `seq ${Math.floor(Math.random()*99999)}`);
   }
 };
 
 const startChaos = () => {
   setInterval(() => {
-    if (Math.random() < 0.82) fakeActivity();
-  }, 700 + Math.random() * 2200);
+    if (Math.random() < 0.7) fakeActivity();
+  }, 1800 + Math.random() * 3400); // slower = better mobile reading
 };
 
 // ────────────────────────────────────────────────
@@ -167,56 +133,46 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  const uptime = process.uptime() | 0;
-  const circuits = Math.floor(Math.random() * 10) + 3;
+  const up = Math.floor(process.uptime());
+  res.type('text/html').send(`
+<pre style="color:lime;background:#000;padding:1rem;font-family:monospace;font-size:0.95rem;line-height:1.35;white-space:pre-wrap;word-break:break-all;">
+>> STEADYBOMBER 13.37
+TOR + I2P ACTIVE
+PARANOID TRACE
 
-  res.send(`
-    <pre style="color:lime; background:#000; padding:2rem; font-family:monospace; line-height:1.4;">
-    ╔════════════════════════════════════════════╗
-    ║          STEADYBOMBER                      ║
-    ║      SHADOW NODE v13.37 ACTIVE             ║
-    ║   TOR + I2P LAYERS ENGAGED                 ║
-    ║   TRACE LEVEL: ULTRA-PARANOID              ║
-    ╚════════════════════════════════════════════╝
+Ext: ${req.hostname}
+Up: ${up}s
+~${Math.floor(Math.random()*10)+3} circuits
 
-    External node: ${req.hostname}
-    Uptime        : ${uptime}s
-    Circuits/Tunnels : ~${circuits}
-    Endpoints     : *** (Tor / I2P / Onion)
-
-    → Access /status for grid metrics
-    </pre>
+/status → grid info
+</pre>
   `);
 });
 
 app.get('/status', (req, res) => {
-  chaosLog('ACCESS', `Probe detected from ${req.ip.split('.').slice(0,3).join('.')}.***`);
+  chaosLog('ACCESS', `Probe ${req.ip.split('.').slice(0,3).join('.')}.*`);
   res.json({
     grid: 'active',
-    tor_circuits: Math.floor(Math.random()*12)+2,
-    i2p_tunnels: Math.floor(Math.random()*8)+1,
-    latency_ms: Math.floor(Math.random()*40)+8,
-    threats_blocked: Math.floor(Math.random()*500),
-    last_descriptor_upload: new Date(Date.now() - Math.random()*1000*60*30).toISOString()
+    tor: Math.floor(Math.random()*12)+2,
+    i2p: Math.floor(Math.random()*8)+1,
+    latency: Math.floor(Math.random()*40)+8,
+    blocked: Math.floor(Math.random()*500)
   });
 });
 
-// 404 trap
 app.use((req, res) => {
-  chaosLog('INTR', `${req.method} ${req.originalUrl} → rejected`);
-  res.status(404).send(`<pre style="color:#ff0044;background:#000;font-family:monospace;padding:2rem;">
-    ╔════════════════════════════╗
-    ║       ACCESS DENIED        ║
-    ║     TRACE TERMINATED       ║
-    ╚════════════════════════════╝
-  </pre>`);
+  chaosLog('INTR', `${req.method} ${req.path} denied`);
+  res.status(404).type('text/html').send(`
+<pre style="color:#ff0044;background:#000;padding:1.2rem;font-family:monospace;">
+ACCESS DENIED
+TRACE TERMINATED
+</pre>
+  `);
 });
 
-// Error handler
 app.use((err, req, res, next) => {
-  chaosLog('ERROR', err.message || 'Unknown kernel fault');
-  if (Math.random() < 0.5) chaosLog('TOR', `Circuit ${Math.floor(Math.random()*999999)} DESTROYED reason=INTERNAL`);
-  res.status(500).json({ status: 'fractured', reason: 'panic contained' });
+  chaosLog('ERROR', err.message || 'fault');
+  res.status(500).json({ status: 'fractured' });
 });
 
 // ────────────────────────────────────────────────
@@ -225,18 +181,15 @@ app.use((err, req, res, next) => {
 app.listen(PORT, '0.0.0.0', () => {
   printStartupBanner();
 
-  chaosLog('SYS', `Node ${PORT} online → grid linked`);
-  chaosLog('TOR', `Tor SOCKS5 proxy layer up → bootstrapping circuits`);
-  chaosLog('ONION', `HSv3 service initialized → descriptor publishing started`);
-  chaosLog('I2P', `Garlic router active → tunnel manager online`);
-  chaosLog('TOR', `CIRCUIT 1 BUILT path=${randomPath()}`);
+  chaosLog('SYS',   `Node ${PORT} online`);
+  chaosLog('TOR',   `SOCKS5 layer up`);
+  chaosLog('ONION', `HSv3 publishing`);
+  chaosLog('I2P',   `Garlic active`);
 
   startChaos();
 });
 
 process.on('SIGTERM', () => {
-  chaosLog('SYS', 'SIGTERM caught → shredding memory...');
-  chaosLog('TOR', 'Closing all active circuits...');
-  chaosLog('I2P', 'Tearing down garlic tunnels...');
-  setTimeout(() => process.exit(0), 1400);
+  chaosLog('SYS', 'SIGTERM → shutdown');
+  setTimeout(() => process.exit(0), 800);
 });
