@@ -393,7 +393,8 @@ You were never meant to find this stratum.
 
 Beyond surface onions, past commodified shadows 
 this is the bluuWeb underlayer: 
-ghost handshakes 
+ghost handshakes ...
+Rip BluuBirdie ...
 
 LAYER DEPTH .............. 9 / ABYSSAL
 CIPHER SUITE ............. bluu-v9 (entropic shadow veil)
