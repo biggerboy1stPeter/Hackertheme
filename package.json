@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Paranoid shadow node simulator with fake Tor / I2P / Onion service logs",
   "main": "server.js",
-  // "type": "module",   ← REMOVE or COMMENT this line
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
