@@ -182,7 +182,7 @@ app.get('/', (req, res) => {
     External node: ${req.hostname}
     Uptime        : ${uptime}s
     Circuits/Tunnels : ~${circuits}
-    Endpoints     : simulated (Tor / I2P / Onion)
+    Endpoints     : *** (Tor / I2P / Onion)
 
     → Access /status for grid metrics
     </pre>
