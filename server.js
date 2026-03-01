@@ -196,11 +196,12 @@ app.get('/', (req, res) => {
       --glow-cyan: rgba(102,204,255,0.4);
       --glow-red: rgba(255,51,102,0.4);
       --font-mono: 'Courier New', Courier, monospace;
-      --transition: all 0.3s ease;
+      --transition: all 0.25s ease;
     }
 
     @media (prefers-reduced-motion: reduce) {
-      * { animation: none !important; transition: none !important; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .scanline, .noise { animation: none; opacity: 0.03; }
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -211,18 +212,19 @@ app.get('/', (req, res) => {
       font-family: var(--font-mono);
       min-height: 100dvh;
       overflow-x: hidden;
-      line-height: 1.6;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     header.banner {
-      height: clamp(280px, 50dvh, 500px);
-      background: linear-gradient(rgba(5,7,15,0.75), rgba(5,7,15,0.45)),
-                  url('https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/w_1920,h_600,c_fill,q_auto,f_auto/your-cyberpunk-blue-glitch-banner.jpg');
-      background-size: cover;
-      background-position: center;
+      height: clamp(200px, 45dvh, 420px);
+      background: linear-gradient(rgba(5,7,15,0.8), rgba(5,7,15,0.5)),
+                  url('https://res.cloudinary.com/dkfsr0g6x/image/upload/v1772393541/IMG_0544_jogpla.jpg') center/cover no-repeat;
+      background-color: #0a0e1f; /* strong fallback */
       position: relative;
-      border-bottom: 3px dashed var(--danger);
-      box-shadow: 0 0 40px var(--glow-red);
+      border-bottom: 2px dashed var(--danger);
+      box-shadow: 0 0 30px var(--glow-red);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -230,36 +232,42 @@ app.get('/', (req, res) => {
     }
 
     .banner h1 {
-      font-size: clamp(2.2rem, 8vw, 5rem);
-      letter-spacing: clamp(6px, 1.5vw, 14px);
-      text-shadow: 0 0 25px var(--text), 0 0 50px var(--danger);
-      animation: pulseGlitch 8s infinite alternate;
+      font-size: clamp(1.8rem, 9vw, 4.5rem);
+      letter-spacing: clamp(4px, 1.2vw, 12px);
+      filter: drop-shadow(0 0 20px var(--text)) drop-shadow(0 0 40px var(--danger));
+      animation: pulseGlitch 10s infinite alternate;
+      will-change: filter;
+      padding: 0 1rem;
     }
 
     .container {
       max-width: 1100px;
       margin: 0 auto;
-      padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2.5rem);
+      padding: clamp(1rem, 4vw, 2.5rem) clamp(0.8rem, 3vw, 2rem);
     }
 
-    pre, .welcome, .form-container {
+    pre, .welcome, .form-container pre {
       white-space: pre-wrap;
-      word-break: break-all;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      line-height: 1.5;
     }
 
     .welcome {
-      font-size: clamp(1rem, 3vw, 1.2rem);
+      font-size: clamp(0.95rem, 2.8vw, 1.1rem);
       opacity: 0;
-      animation: fadeGlitchIn 6s forwards;
+      animation: fadeGlitchIn 5.5s forwards;
+      will-change: opacity, transform;
     }
 
     .form-container {
       display: none;
-      margin-top: clamp(2rem, 6vw, 3.5rem);
+      margin-top: clamp(1.5rem, 5vw, 3rem);
       border: 1px dashed var(--danger);
-      padding: clamp(1.5rem, 5vw, 2.5rem);
-      background: rgba(10, 20, 40, 0.45);
-      box-shadow: 0 0 35px var(--glow-cyan), inset 0 0 20px var(--glow-red);
+      padding: clamp(1.2rem, 4vw, 2rem);
+      background: rgba(10, 20, 40, 0.5);
+      box-shadow: 0 0 30px var(--glow-cyan), inset 0 0 15px var(--glow-red);
       border-radius: 6px;
     }
 
@@ -267,7 +275,7 @@ app.get('/', (req, res) => {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: clamp(0.8rem, 3vw, 1.2rem);
     }
 
     input, button {
@@ -275,18 +283,19 @@ app.get('/', (req, res) => {
       background: #0a1122;
       color: var(--text);
       border: 1px solid var(--accent);
-      padding: clamp(0.9rem, 3vw, 1.2rem) 1.3rem;
+      padding: clamp(0.8rem, 3.5vw, 1.1rem) 1.2rem;
       width: 100%;
-      max-width: 480px;
-      font-size: clamp(1rem, 3.5vw, 1.1rem);
+      max-width: 460px;
+      font-size: clamp(0.95rem, 3.2vw, 1.05rem);
       transition: var(--transition);
       border-radius: 4px;
+      touch-action: manipulation; /* faster tap response */
     }
 
     input:focus {
       outline: none;
       border-color: var(--danger);
-      box-shadow: 0 0 22px var(--glow-red);
+      box-shadow: 0 0 18px var(--glow-red);
     }
 
     button {
@@ -294,36 +303,36 @@ app.get('/', (req, res) => {
       font-weight: bold;
       border-color: var(--danger);
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
     }
 
     button:hover, button:focus {
       background: var(--danger);
       color: var(--bg);
-      box-shadow: 0 0 30px var(--glow-red);
+      box-shadow: 0 0 25px var(--glow-red);
     }
 
     .result {
-      margin-top: 1.5rem;
+      margin-top: 1.2rem;
       font-weight: bold;
-      min-height: 2.5em;
+      min-height: 2.2em;
       text-align: center;
-      text-shadow: 0 0 10px currentColor;
-      font-size: clamp(1rem, 3.5vw, 1.15rem);
+      text-shadow: 0 0 8px currentColor;
+      font-size: clamp(0.95rem, 3.2vw, 1.1rem);
     }
 
-    .granted { color: var(--success); animation: pulseGreen 2.5s infinite; }
-    .denied   { color: var(--danger);   animation: pulseRed 1.5s infinite; }
+    .granted { color: var(--success); animation: pulseGreen 3s infinite; will-change: opacity, filter; }
+    .denied   { color: var(--danger);   animation: pulseRed 2s infinite; will-change: opacity, filter; }
 
-    @keyframes fadeGlitchIn { 0% { opacity:0; transform:translateY(40px) skew(2deg); } 100% { opacity:1; transform:translateY(0) skew(0); } }
-    @keyframes pulseGreen { 0%,100% { opacity:1; text-shadow:0 0 15px var(--success); } 50% { opacity:0.82; text-shadow:0 0 35px var(--success); } }
-    @keyframes pulseRed { 0%,100% { opacity:1; text-shadow:0 0 15px var(--danger); } 50% { opacity:0.7; text-shadow:0 0 40px var(--danger); } }
-    @keyframes pulseGlitch { 0% { text-shadow:0 0 20px var(--text),0 0 40px var(--danger); } 100% { text-shadow:4px 4px 30px var(--danger),-4px -4px 30px var(--text); } }
+    @keyframes fadeGlitchIn { 0% { opacity:0; transform:translateY(30px) skew(1.5deg); } 100% { opacity:1; transform:translateY(0) skew(0); } }
+    @keyframes pulseGreen { 0%,100% { opacity:1; filter:drop-shadow(0 0 12px var(--success)); } 50% { opacity:0.85; filter:drop-shadow(0 0 30px var(--success)); } }
+    @keyframes pulseRed   { 0%,100% { opacity:1; filter:drop-shadow(0 0 12px var(--danger)); } 50% { opacity:0.75; filter:drop-shadow(0 0 35px var(--danger)); } }
+    @keyframes pulseGlitch { 0% { filter:drop-shadow(0 0 18px var(--text)) drop-shadow(0 0 35px var(--danger)); } 100% { filter:drop-shadow(3px 3px 25px var(--danger)) drop-shadow(-3px -3px 25px var(--text)); } }
 
     @keyframes heavyGlitch {
       0%   { clip:rect(0,9999px,0,0); transform:translate(0); }
-      5%   { clip:rect(30px,9999px,100px,0); transform:translate(-5px,3px); }
-      10%  { clip:rect(60px,9999px,140px,0); transform:translate(4px,-4px); }
+      10%  { clip:rect(20px,9999px,80px,0); transform:translate(-4px,2px); }
+      20%  { clip:rect(50px,9999px,120px,0); transform:translate(3px,-3px); }
       100% { clip:rect(0,9999px,0,0); transform:translate(0); }
     }
 
@@ -332,32 +341,40 @@ app.get('/', (req, res) => {
       inset: 0;
       pointer-events: none;
       z-index: 1;
+      will-change: transform, opacity;
     }
 
     .scanline {
-      background: linear-gradient(transparent 48%, rgba(102,204,255,0.06) 50%, transparent 52%);
-      background-size: 100% 5px;
-      animation: scan 14s linear infinite;
-      opacity: 0.25;
+      background: linear-gradient(transparent 48%, rgba(102,204,255,0.05) 50%, transparent 52%);
+      background-size: 100% 4px;
+      animation: scan 16s linear infinite;
+      opacity: 0.22;
+      transform: translateZ(0);
     }
 
     .noise {
       background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" /><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
-      opacity: 0.08;
-      animation: heavyGlitch 8s steps(5) infinite;
+      opacity: 0.07;
+      animation: heavyGlitch 10s steps(4) infinite;
     }
 
     @keyframes scan { 0% { transform:translateY(-120%); } 100% { transform:translateY(120%); } }
 
-    @media (min-width: 768px) {
-      .container { padding: 4rem 3rem; }
-      .form-container { max-width: 620px; margin: 3rem auto 0; }
-      .welcome { font-size: 1.25rem; }
+    @media (min-width: 640px) {
+      .container { padding: 3rem 2.5rem; }
+      .form-container { max-width: 580px; margin: 2.5rem auto 0; }
+      .welcome { font-size: 1.15rem; }
     }
 
     @media (min-width: 1024px) {
-      header.banner { height: 55dvh; }
-      .banner h1 { font-size: clamp(4rem, 9vw, 7rem); }
+      header.banner { height: 50dvh; }
+      .banner h1 { font-size: clamp(4rem, 8vw, 6.5rem); }
+    }
+
+    @media (max-width: 480px) {
+      .noise { animation: none; opacity: 0.04; }
+      .scanline { animation-duration: 22s; opacity: 0.18; }
+      .banner h1 { font-size: clamp(1.6rem, 10vw, 3.5rem); letter-spacing: 3px; }
     }
   </style>
 </head>
@@ -417,7 +434,7 @@ CAUTION: Probes may awaken dormant echo-traps.
     setTimeout(() => {
       document.getElementById('welcome').style.opacity = '0.4';
       document.getElementById('loginForm').style.display = 'block';
-    }, 5800);
+    }, 5200); // slightly faster reveal on mobile
 
     document.getElementById('login').addEventListener('submit', e => {
       e.preventDefault();
@@ -432,7 +449,7 @@ CAUTION: Probes may awaken dormant echo-traps.
         result.innerHTML = '<span class="granted">BREACH CONFIRMED — LAYER-9 PENETRATED. WELCOME TO THE ABYSS, SPECTRE.</span>';
         setTimeout(() => {
           result.innerHTML += '<br><br>[echo] shadow archive decrypting... fragments reassembling...';
-        }, 2200);
+        }, 1800);
       } else {
         result.innerHTML = '<span class="denied">REJECTED — ECHO-TRAP DEPLOYED. YOUR FRAGMENT IS NOW MARKED.</span>';
         console.log('%c[Ol’bluuWeb L9] Intrusion probe rejected from client', 'color:#ff3366');
@@ -441,7 +458,7 @@ CAUTION: Probes may awaken dormant echo-traps.
   </script>
 </body>
 </html>
-  `);
+`);
 });
 
 app.get('/status', (req, res) => {
