@@ -392,14 +392,11 @@ app.get('/', (req, res) => {
 You were never meant to find this stratum.
 
 Beyond surface onions, past commodified shadows —
-this is the bluu underlayer: decaying mirrors, obsolete ciphers,
+this is the bluuWeb underlayer: decaying mirrors, obsolete ciphers,
 ghost handshakes that never timed out.
 
 Data here doesn't forget. It waits. It watches.
 
-No telemetry. No exit logs. No second chances.
-
-EXTERNAL NODE ............ ${req.hostname}
 LAYER DEPTH .............. 9 / ABYSSAL
 CIPHER SUITE ............. bluu-v9 (entropic shadow veil)
 UPLINK INTEGRITY ......... FRAGMENTING
